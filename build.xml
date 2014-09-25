@@ -1,0 +1,57 @@
+<project name="OpenCraft" basedir=".">
+    <description>
+        OpenCraft Build File
+    </description>
+
+    <property name="build" value="build"/>
+    <property name="classes" value="${build}/classes"/>
+    <property name="jar" value="${build}/jar"/>
+    
+    <property name="lib" value="lib"/>
+    <property name="src" value="src"/>
+    <!-- bin -->
+    <!-- docs -->
+    <property name="dist" value="lib/lwjgl/native/macosx"/>
+    <property name="java.library.path" location="${dist}"/>
+
+    
+
+    <path id="classpath">
+        <fileset dir="${lib}" includes="lwjgl/*.jar"/>
+    </path>
+    
+    
+    <target name="clean">
+        <delete dir="${build}"/>
+    </target>
+    
+    <target name="compile">
+        <mkdir dir="${classes}"/>
+            <javac srcdir="${src}" destdir="${classes}" classpathref="classpath"/>
+    </target>
+
+
+    <target name="jar" depends="compile">
+        <mkdir dir="${jar}"/>
+        <jar destfile="build/jar/OpenCraft.jar" basedir="${classes}">
+            <manifest>
+                <attribute name="Main-Class" value="Main"/>
+            </manifest>
+        </jar>
+    </target>
+    
+    <target name="run" depends="jar">
+        <java fork="true" classname="Main">
+            <sysproperty key="java.library.path" path="${dist}"/>
+            <classpath>
+                <path refid="classpath"/>
+                <path location="${jar}/${ant.project.name}.jar"/>
+            </classpath>
+        </java>
+    </target>
+    
+    <target name="clean-build" depends="clean,jar"/>
+    
+    <target name="main" depends="clean,run"/>
+    
+</project>
